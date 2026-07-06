@@ -5,6 +5,15 @@
 *.tfvars
 !*.tfvars.example
 crash.log
+terraform.tfvars
+.terraform.lock.hcl
+.terraform
+
+# Ansible
+kubeconfig
+*.retry
+inventory.ini
+*.log
 
 # kubeconfig & cluster joins
 kubeconfig
@@ -22,6 +31,9 @@ node-token
 *.pem
 *.key
 id_rsa*
+manifests/secret.yaml
+secret-plain.yaml
+selead-secret.yaml
 
 # argo / helm local
 charts/*.tgz

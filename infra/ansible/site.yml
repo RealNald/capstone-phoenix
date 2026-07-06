@@ -1,0 +1,84 @@
+---
+- name: Bootstrap Kubernetes Cluster with k3s
+  hosts: all
+  become: true
+  gather_facts: yes
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Install required system packages
+      apt:
+        name:
+          - curl
+          - wget
+          - net-tools
+          - apt-transport-https
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+        # Add swap (this runs after facts are gathered)
+    - name: Check if swap exists
+      command: swapon --show
+      register: swap_check
+      changed_when: false
+      ignore_errors: true
+
+    - name: Create swap file
+      shell: |
+        fallocate -l 1G /swapfile
+        chmod 600 /swapfile
+        mkswap /swapfile
+        swapon /swapfile
+        echo '/swapfile none swap sw 0 0' >> /etc/fstab
+      when: swap_check.stdout == ""
+      tags: swap
+- name: Apply hardening to all nodes
+  hosts: all
+  become: true
+  roles:
+    - hardening
+
+- name: Setup Control Plane (k3s server)
+  hosts: control_plane
+  become: true
+  roles:
+    - k3s_server
+
+- name: Join Workers to cluster
+  hosts: workers
+  become: true
+  roles:
+    - k3s_agent
+
+- name: Fetch and prepare kubeconfig locally
+  hosts: control_plane
+  become: false
+  run_once: true
+  tasks:
+    - name: Read kubeconfig from control plane
+      slurp:
+        src: /etc/rancher/k3s/k3s.yaml
+      register: kubeconfig_enc
+      delegate_to: "{{ groups['control_plane'][0] }}"
+
+    - name: Get control plane public IP
+      set_fact:
+        public_ip: "{{ groups['control_plane'][0] }}"
+
+    - name: Write working kubeconfig to local machine
+      copy:
+        content: |
+          {{ kubeconfig_enc.content | b64decode | regex_replace('127.0.0.1', public_ip) }}
+        dest: ./kubeconfig
+        mode: '0600'
+      delegate_to: localhost
+
+    - name: Display kubectl command for verification
+      debug:
+        msg: |
+          kubeconfig saved to ./kubeconfig
+          Run: export KUBECONFIG=./kubeconfig
+          Run: kubectl get nodes

@@ -1,0 +1,43 @@
+---
+- name: Install k3s on control plane
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - \
+      --write-kubeconfig-mode 644 \
+      --disable traefik \
+      --disable servicelb \
+      --disable local-storage \
+      --disable network-policy \
+      --disable-agent
+  args:
+    creates: /usr/local/bin/kubectl
+  register: k3s_install
+
+- name: Wait for k3s to be ready
+  shell: kubectl get nodes
+  register: kubectl_result
+  until: kubectl_result.rc == 0
+  retries: 10
+  delay: 5
+
+- name: Capture node token for worker join
+  slurp:
+    src: /var/lib/rancher/k3s/server/node-token
+  register: node_token_enc
+
+- name: Store token as a fact
+  set_fact:
+    k3s_token: "{{ node_token_enc.content | b64decode | trim }}"
+    cacheable: true
+
+- name: Ensure ubuntu user can use kubectl
+  file:
+    path: /etc/rancher/k3s/k3s.yaml
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
+
+- name: Add kubectl alias to ubuntu user's bashrc
+  lineinfile:
+    path: /home/ubuntu/.bashrc
+    line: 'alias k="kubectl"'
+    create: true

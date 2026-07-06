@@ -1,0 +1,13 @@
+---
+# Global variables for all nodes
+project_name: phoenix
+project_domain: "http://sopuruchi.duckdns.org"   # Change to your actual domain later
+
+# Timezone (optional)
+timezone: UTC
+
+# Docker mirror registry (optional, for faster pulls)
+# docker_registry: ""
+
+# K3s version (if you want a specific version)
+#k3s_version: "v1.28.2+k3s1"
