@@ -4,8 +4,10 @@ metadata:
   name: taskapp-config
   namespace: taskapp
 data:
-  DATABASE_URL: "postgresql://postgres:$(DB_PASSWORD)@postgres:5432/taskapp"
   FLASK_ENV: "production"
   FLASK_APP: "app.py"
-  # Frontend API URL
-  REACT_APP_API_URL: "https://api.taskapp.sopuruchi.duckdns.org"
+  DB_HOST: "postgres.taskapp.svc.cluster.local"
+  DB_PORT: "5432"
+  DB_NAME: "taskapp"
+  DB_USER: "postgres"
+  REACT_APP_API_URL: "https://api.sopuruchi.duckdns.org"

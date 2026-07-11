@@ -4,7 +4,13 @@ metadata:
   name: taskapp-ingress
   namespace: taskapp
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    # REMOVED: rewrite-target (not needed for subdomain routing)
+    # ADDED: CORS headers so your frontend can call the API
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://taskapp.sopuruchi.duckdns.org"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
+    # KEPT: Cert-manager for automatic HTTPS
     cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
   ingressClassName: nginx

@@ -4,15 +4,19 @@ metadata:
   name: db-migration
   namespace: taskapp
   annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
     argocd.argoproj.io/sync-wave: "5"
-    argocd.argoproj.io/hook: Sync
 spec:
+  ttlSecondsAfterFinished: 86400
   template:
     spec:
+      imagePullSecrets:
+        - name: ghcr-credentials
       restartPolicy: OnFailure
-      containers:
+      containers:                           
         - name: migration
-          image: ghcr.io/realnald/capstone-phoenix-backend:main-<COMMIT_SHA>
+          image: ghcr.io/ts-a-devops/taskapp-backend:5d6b8fc
           command: ["python", "-m", "flask", "db", "upgrade"]
           envFrom:
             - configMapRef:

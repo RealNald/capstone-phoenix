@@ -4,22 +4,55 @@ metadata:
   name: taskapp-network-policy
   namespace: taskapp
 spec:
-  podSelector: {}
+  podSelector: {}  # Applies to ALL pods in the taskapp namespace
   policyTypes:
     - Ingress
+    - Egress  #  ADDED: Explicitly control outbound traffic
   ingress:
-    # Allow frontend to talk to backend
+    # 1. Allow the Ingress Controller (NGINX) to reach frontend (port 80) and backend (port 5000)
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: ingress-nginx  #  Changed: Uses pod labels (more reliable)
+          namespaceSelector: {}  # Allows from ANY namespace (ingress-nginx, kube-system, etc.)
+      ports:
+        - port: 80
+        - port: 5000
+    # 2. Allow frontend pods to talk to backend pods on port 5000
     - from:
         - podSelector:
             matchLabels:
               app: frontend
       ports:
         - port: 5000
-    # Allow Ingress to talk to frontend and backend
-    - from:
+    # 3. (Optional but recommended) Allow ArgoCD/health checks from the kubelet
+    # Kubelet doesn't go through network policies, so no rule needed for liveness/readiness.
+  egress:
+    # 1. Allow ALL pods in taskapp to resolve DNS (CoreDNS on port 53 UDP)
+    # Without this, your pods cannot resolve "postgres.taskapp.svc.cluster.local"
+    - to:
         - namespaceSelector:
             matchLabels:
-              name: ingress-nginx
+              kubernetes.io/metadata.name: kube-system  # CoreDNS runs here
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
       ports:
-        - port: 80
-        - port: 5000
+        - port: 53
+          protocol: UDP
+    # 2. Allow backend AND migration jobs to talk to PostgreSQL (port 5432)
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres
+      ports:
+        - port: 5432
+    # 3. (Optional) Allow backend to reach external APIs if needed
+    # Uncomment if your backend calls external services (e.g., Stripe, SendGrid)
+    # - to:
+    #     - ipBlock:
+    #         cidr: 0.0.0.0/0
+    #         except:
+    #           - 10.0.0.0/8
+    #           - 172.16.0.0/12
+    #           - 192.168.0.0/16

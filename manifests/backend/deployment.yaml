@@ -18,10 +18,13 @@ spec:
       labels:
         app: backend
     spec:
+      imagePullSecrets:
+        - name: ghcr-credentials
       containers:
         - name: backend
-          image: ghcr.io/ts-a-devops/taskapp-backend:5d6b8fc 
+          image: ghcr.io/ts-a-devops/taskapp-backend:5d6b8fc
           imagePullPolicy: IfNotPresent
+          #  Clean approach: inject ALL ConfigMap and Secret keys as env vars
           envFrom:
             - configMapRef:
                 name: taskapp-config
@@ -54,7 +57,6 @@ spec:
               port: 5000
             failureThreshold: 30
             periodSeconds: 10
-      # Force pods to spread across nodes
       topologySpreadConstraints:
         - maxSkew: 1
           topologyKey: kubernetes.io/hostname
