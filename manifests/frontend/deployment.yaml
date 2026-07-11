@@ -4,7 +4,7 @@ metadata:
   name: frontend
   namespace: taskapp
 spec:
-  replicas: 3
+  replicas: 2
   strategy:
     rollingUpdate:
       maxSurge: 1
@@ -19,7 +19,7 @@ spec:
         app: frontend
     spec:
       #imagePullSecrets:
-      #  - name: ghcr-credentials
+        - name: ghcr-credentials
       containers:
         - name: frontend
           image: ghcr.io/ts-a-devops/taskapp-frontend:26da2b0  
