@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/RealNald/capstone-phoenix.git
     targetRevision: main
-    path: manifests
+    path: ./
   destination:
     server: https://kubernetes.default.svc
     namespace: taskapp

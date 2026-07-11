@@ -18,8 +18,8 @@ spec:
       labels:
         app: frontend
     spec:
-      imagePullSecrets:
-        - name: ghcr-credentials
+      #imagePullSecrets:
+      #  - name: ghcr-credentials
       containers:
         - name: frontend
           image: ghcr.io/ts-a-devops/taskapp-frontend:26da2b0  
