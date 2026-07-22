@@ -10,4 +10,4 @@ data:
   DB_PORT: "5432"
   DB_NAME: "taskapp"
   DB_USER: "postgres"
-  REACT_APP_API_URL: "https://api.sopuruchi.duckdns.org"
+  REACT_APP_API_URL: "https://api.23.20.129.242.nip.io"

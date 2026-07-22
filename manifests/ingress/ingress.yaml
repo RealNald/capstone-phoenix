@@ -7,7 +7,7 @@ metadata:
     # REMOVED: rewrite-target (not needed for subdomain routing)
     # ADDED: CORS headers so your frontend can call the API
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://taskapp.sopuruchi.duckdns.org"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://taskapp.23.20.129.242.nip.io"
     nginx.ingress.kubernetes.io/cors-allow-methods: "GET, PUT, POST, DELETE, PATCH, OPTIONS"
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization"
     # KEPT: Cert-manager for automatic HTTPS
@@ -16,11 +16,11 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - taskapp.sopuruchi.duckdns.org
-        - api.sopuruchi.duckdns.org
+        - taskapp.23.20.129.242.nip.io
+        - api.23.20.129.242.nip.io
       secretName: taskapp-tls
   rules:
-    - host: taskapp.sopuruchi.duckdns.org
+    - host: taskapp.23.20.129.242.nip.io
       http:
         paths:
           - path: /
@@ -30,7 +30,7 @@ spec:
                 name: frontend
                 port:
                   number: 80
-    - host: api.sopuruchi.duckdns.org
+    - host: api.23.20.129.242.nip.io
       http:
         paths:
           - path: /
