@@ -64,7 +64,7 @@ spec:
           labelSelector:
             matchLabels:
               app: backend
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
-        allowPrivilegeEscalation: false
+     # securityContext:
+      #  runAsNonRoot: true
+       # runAsUser: 1000
+        #allowPrivilegeEscalation: false
