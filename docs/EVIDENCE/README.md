@@ -10,3 +10,4 @@ Drop screenshots/logs here, named so a grader knows what each proves:
 - `hpa-scale.png` — replicas climbing under load
 - `argocd-synced.png` — Argo CD Synced + Healthy
 - `failover.png` — app up after a node drain
+<img width="810" height="544" alt="kubectl get pods -n argocd" src="https://github.com/user-attachments/assets/b72e57f0-c106-47cc-b968-8bcb540124a0" />
