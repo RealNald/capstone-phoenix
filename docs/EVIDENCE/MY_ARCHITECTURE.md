@@ -1,8 +1,8 @@
 **1. TOPOLOGY DIAGRAM**
                                     Internet
                                        │
-                          DNS: taskapp.yourdomain.com
-                              api.yourdomain.com
+                          DNS: taskapp.23.20.129.242.nip.io
+                              api.23.20.129.242.nip.io
                                        │
                                        ▼
                         ┌──────────────────────────────┐
